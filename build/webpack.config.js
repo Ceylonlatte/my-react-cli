@@ -2,6 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const constants = require('./utils/constant')
 const { SRC_PATH, DIST_PATH, PUBLIC_PATH } = constants
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const isEnvProduction = process.env.NODE_ENV === 'production'
 
@@ -95,7 +96,6 @@ module.exports = {
         },
       },
 
-
     ]
   },
 
@@ -103,11 +103,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(PUBLIC_PATH, 'index.html')
     }),
-  ],
+    !isEnvProduction && new ReactRefreshWebpackPlugin()
+  ].filter(Boolean),
   
   devServer: {
     host: 'localhost',
-    port: 8080,
+    port: 8088,
     open: true,
     hot: true,
     // 使用 index.html 代替所有404页面，解决使用H5的history API刷新页面导致404的问题
