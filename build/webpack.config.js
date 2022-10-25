@@ -1,7 +1,6 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const constants = require('./utils/constant')
-const { SRC_PATH, DIST_PATH, PUBLIC_PATH } = constants
+const paths = require('./utils/paths');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const isEnvProduction = process.env.NODE_ENV === 'production'
@@ -29,22 +28,24 @@ const getStyleLoaders = (prevLoader) => {
 
 
 
-module.exports = {
+module.exports =  {
   mode: isEnvProduction ? 'production' : 'development',
   devtool: isEnvProduction ? false : 'cheap-module-source-map',
   entry: {
-    index: path.join(SRC_PATH, 'index.tsx'),
+    index: path.join(paths.appSrc, 'index.tsx'),
   },
   output: {
-    path: DIST_PATH,
-    filename: '[name].[contenthash:8].js', // contenthash：只有模块的内容改变，才会改变hash值
+    path: paths.appBuild,
+    filename: isEnvProduction
+    ? 'static/js/[name].[contenthash:8].js'
+    : 'static/js/bundle.js',
     clean: true, // webpack4需要配置clean-webpack-plugin来删除dist文件,webpack5内置了
     publicPath: '/' // 打包后文件的公共前缀路径
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js'], // add .tsx, .ts
     alias: {
-      '@': SRC_PATH
+      '@': paths.appSrc
     },
   },
   module: {
@@ -101,11 +102,15 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(PUBLIC_PATH, 'index.html')
+      template: path.join(paths.appPublic, 'index.html')
     }),
     !isEnvProduction && new ReactRefreshWebpackPlugin()
   ].filter(Boolean),
-  
+
+  cache: {
+    type: 'filesystem', // 使用文件缓存
+  },
+
   devServer: {
     host: 'localhost',
     port: 8088,
