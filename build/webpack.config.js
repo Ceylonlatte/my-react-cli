@@ -1,9 +1,13 @@
+const webpack = require('webpack');
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const paths = require('./utils/paths');
+const paths = require('./paths');
+const getClientEnvironment = require('./env');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const isEnvProduction = process.env.NODE_ENV === 'production'
+
+const env = getClientEnvironment();
 
 const getStyleLoaders = (prevLoader) => {
   return [
@@ -104,6 +108,7 @@ module.exports =  {
     new HtmlWebpackPlugin({
       template: path.join(paths.appPublic, 'index.html')
     }),
+    new webpack.DefinePlugin(env.stringified),
     !isEnvProduction && new ReactRefreshWebpackPlugin()
   ].filter(Boolean),
 
