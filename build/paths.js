@@ -13,6 +13,7 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 
 module.exports = {
+    dotenv: resolveApp('.env'),
     appPath: resolveApp('.'),
     appPublic: resolveApp('public'),
     appBuild: resolveApp('dist'),
